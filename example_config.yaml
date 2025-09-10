@@ -1,0 +1,108 @@
+# ArXiv Paper Crawler Configuration Example
+# Copy this file to config.yaml and modify as needed
+
+# ArXiv API settings
+api:
+  # Base URL for ArXiv API (do not change unless using a mirror)
+  base_url: "http://export.arxiv.org/api/query"
+  
+  # Maximum results per API query (ArXiv limit is 2000, recommended: 100-500)
+  max_results_per_query: 100
+  
+  # Delay between API requests in seconds (MINIMUM 3 seconds - ArXiv requirement)
+  # Setting this below 3.0 may result in IP blocking
+  request_delay: 3.0
+  
+  # User agent string for API requests (change to your own)
+  user_agent: "ArxivCrawler/1.0 (https://github.com/user/arxiv-crawler; your-email@example.com)"
+  
+  # Request timeout in seconds
+  timeout: 30
+
+# Download settings
+download:
+  # Directory where PDFs will be downloaded
+  # Use forward slashes (/) even on Windows, or double backslashes (\\)
+  output_directory: "./downloaded_papers"
+  
+  # Maximum concurrent downloads (recommended: 3-8)
+  # Too high values may overwhelm the server or your connection
+  max_concurrent_downloads: 5
+  
+  # Number of retry attempts for failed downloads
+  retry_attempts: 3
+  
+  # Download timeout in seconds (for individual files)
+  timeout: 60
+  
+  # Filename pattern for downloaded papers
+  # Available variables:
+  #   {year} - Publication year
+  #   {first_author} - First author's name (sanitized)
+  #   {title} - Paper title (sanitized and truncated)
+  #   {arxiv_id} - ArXiv ID (e.g., 2301.12345)
+  filename_pattern: "{year}_{first_author}_{title}"
+  
+  # Create subdirectories for each ArXiv category
+  create_category_folders: true
+
+# Data storage settings
+storage:
+  # SQLite database path for storing paper metadata
+  database_path: "./arxiv_papers.db"
+  
+  # Export formats to support
+  export_formats:
+    - "json"
+    - "csv"
+  
+  # Automatically backup database before major operations
+  auto_backup: true
+
+# Logging settings
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  # DEBUG: Very detailed information for troubleshooting
+  # INFO: General information about program execution
+  # WARNING: Something unexpected happened but the program continues
+  # ERROR: A serious problem occurred
+  level: "INFO"
+  
+  # Log file path (set to "none" to disable file logging)
+  log_file: "arxiv_crawler.log"
+  
+  # Maximum log file size before rotation
+  max_file_size: "10MB"
+  
+  # Number of backup log files to keep
+  backup_count: 3
+
+# Environment-specific settings (examples)
+# These can be overridden by environment variables:
+#
+# API settings:
+#   ARXIV_API_BASE_URL
+#   ARXIV_API_MAX_RESULTS
+#   ARXIV_API_DELAY
+#   ARXIV_API_USER_AGENT
+#   ARXIV_API_TIMEOUT
+#
+# Download settings:
+#   ARXIV_DOWNLOAD_DIR
+#   ARXIV_DOWNLOAD_THREADS
+#   ARXIV_DOWNLOAD_RETRIES
+#   ARXIV_DOWNLOAD_TIMEOUT
+#   ARXIV_FILENAME_PATTERN
+#
+# Storage settings:
+#   ARXIV_DATABASE_PATH
+#
+# Logging settings:
+#   ARXIV_LOG_LEVEL
+#   ARXIV_LOG_FILE
+
+# Example usage with environment variables:
+# export ARXIV_DOWNLOAD_DIR="/home/user/papers"
+# export ARXIV_DOWNLOAD_THREADS=8
+# export ARXIV_LOG_LEVEL=DEBUG
+# python main.py search --query "machine learning"
