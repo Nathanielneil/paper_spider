@@ -274,12 +274,12 @@ python setup.py sdist bdist_wheel
 
 ## 联系方式
 
-- 项目主页：https://github.com/user/arxiv-paper-crawler
-- 问题反馈：https://github.com/user/arxiv-paper-crawler/issues
+- 项目主页：https://github.com/Nathanielneil/paper_spider
+- 问题反馈：https://github.com/Nathanielneil/paper_spider/issues
 
 ## 更新日志
 
-### v1.0.0 (2024-01-15)
+### v1.0.0 (2025-09-11)
 - 初始版本发布
 - 完整的搜索和下载功能
 - 数据库存储和管理
