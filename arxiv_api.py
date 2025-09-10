@@ -36,6 +36,7 @@ class ArxivAPI:
         Args:
             config: Configuration dictionary containing API settings
         """
+        self.config = config  # Store config for later use
         self.base_url = config.get('base_url', 'http://export.arxiv.org/api/query')
         self.max_results = config.get('max_results_per_query', 100)
         self.request_delay = config.get('request_delay', 3.0)
