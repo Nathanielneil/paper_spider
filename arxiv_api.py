@@ -47,14 +47,31 @@ class ArxivAPI:
         
     def _setup_session(self) -> None:
         """Setup HTTP session with retry strategy and timeout."""
+        config_dict = {
+            'user_agent': self.user_agent,
+            'verify_ssl': self.config.get('verify_ssl', False),
+            'timeout': self.timeout
+        }
+        
+        # Use robust session if enabled
+        if self.config.get('use_robust_session', True):
+            try:
+                from network_utils import create_robust_session
+                self.session = create_robust_session(config_dict)
+                self.logger.info("Using robust network session")
+                return
+            except ImportError:
+                self.logger.warning("network_utils not available, using fallback session")
+        
+        # Fallback to manual session setup
         self.session = requests.Session()
         
         # Configure retry strategy
         retry_strategy = Retry(
-            total=3,
-            status_forcelist=[429, 500, 502, 503, 504],
+            total=5,
+            status_forcelist=[429, 500, 502, 503, 504, 520, 521, 522, 523, 524],
             allowed_methods=["HEAD", "GET", "OPTIONS"],
-            backoff_factor=1
+            backoff_factor=2
         )
         
         adapter = HTTPAdapter(max_retries=retry_strategy)
@@ -64,8 +81,20 @@ class ArxivAPI:
         # Set headers
         self.session.headers.update({
             'User-Agent': self.user_agent,
-            'Accept': 'application/atom+xml'
+            'Accept': 'application/atom+xml, text/xml, */*',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'close'
         })
+        
+        # Configure SSL and proxy settings
+        self.session.verify = self.config.get('verify_ssl', False)
+        
+        # Handle proxy configuration
+        import os
+        if not any(os.getenv(var) for var in ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']):
+            self.session.proxies = {}
+            
+        self.logger.info(f"Session configured with SSL verification: {self.session.verify}")
     
     def _build_query(self, 
                      query: Optional[str] = None,
