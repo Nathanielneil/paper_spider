@@ -93,7 +93,7 @@ class DownloadManager:
         retry_strategy = Retry(
             total=self.retry_attempts,
             status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "OPTIONS"],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
             backoff_factor=1
         )
         
